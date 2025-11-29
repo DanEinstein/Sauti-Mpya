@@ -70,11 +70,29 @@ cd Sauti-v2
 # Install dependencies
 npm install
 
+# Set up environment variables
+# Create a .env file in the root directory
+cp .env.example .env
+
+# Add your Groq API key to .env
+# Get a free API key from https://console.groq.com
+# VITE_GROQ_API_KEY=your_actual_api_key_here
+
 # Start development server
 npm run dev
 ```
 
 The application will be available at `http://localhost:5173`
+
+### Getting a Groq API Key
+
+1. Go to [console.groq.com](https://console.groq.com)
+2. Sign up for a free account
+3. Navigate to API Keys section
+4. Create a new API key
+5. Copy the key and add it to your `.env` file as `VITE_GROQ_API_KEY=your_key_here`
+
+**Note**: The app works without an API key but with limited AI features. Voice recording and rule-based chat responses will still work.
 
 ### Available Scripts
 
@@ -102,9 +120,26 @@ npm run typecheck
 - **Styling**: Tailwind CSS
 - **PDF Generation**: jsPDF
 - **Icons**: Lucide React
-- **Backend**: Supabase (optional, for future features)
+- **AI Integration**: Groq AI (Llama 3.3 + Whisper)
+- **Audio**: Web Audio API (MediaRecorder)
 - **Build Tool**: Vite
 - **Hosting**: Vercel (recommended)
+
+## 🎙️ Voice Message Features
+
+- **Voice Recording**: Record voice messages directly in the chat
+- **Audio Transcription**: Automatic speech-to-text using Groq Whisper
+- **Playback Preview**: Listen to your recording before sending
+- **Visual Feedback**: Real-time recording indicators and waveform animation
+- **Browser Support**: Works in all modern browsers (Chrome, Firefox, Safari, Edge)
+
+## 🤖 AI-Powered Features
+
+- **Intelligent Chat**: Context-aware responses using Groq's Llama 3.3 model
+- **Voice Transcription**: Fast, accurate transcription with Whisper Large V3 Turbo
+- **Personalized Assessment**: AI-generated recommendations based on safety assessment
+- **Trauma-Informed**: Specially crafted prompts for GBV support context
+- **Fallback Support**: Works with or without API key (limited features without key)
 
 ## 🚀 Deployment
 

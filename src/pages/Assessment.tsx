@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { AlertTriangle, CheckCircle, AlertCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { analyzeAssessment, isGroqAvailable } from '../services/groqService';
 
 interface Question {
   id: number;
@@ -22,6 +23,8 @@ const questions: Question[] = [
 export function Assessment() {
   const [answers, setAnswers] = useState<Record<number, boolean>>({});
   const [showResult, setShowResult] = useState(false);
+  const [aiRecommendations, setAiRecommendations] = useState<string>('');
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   const handleAnswer = (questionId: number, answer: boolean) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
@@ -43,15 +46,30 @@ export function Assessment() {
     return { level: 'Low Risk', color: 'green', bgColor: 'bg-green-100', textColor: 'text-green-800', borderColor: 'border-green-500' };
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (Object.keys(answers).length === questions.length) {
       setShowResult(true);
+
+      // Get AI recommendations if Groq is available
+      if (isGroqAvailable()) {
+        setIsLoadingAI(true);
+        try {
+          const recommendations = await analyzeAssessment(answers, questions);
+          setAiRecommendations(recommendations);
+        } catch (error) {
+          console.error('Error getting AI recommendations:', error);
+        } finally {
+          setIsLoadingAI(false);
+        }
+      }
     }
   };
 
   const resetAssessment = () => {
     setAnswers({});
     setShowResult(false);
+    setAiRecommendations('');
+    setIsLoadingAI(false);
   };
 
   const score = calculateScore();
@@ -127,7 +145,24 @@ export function Assessment() {
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          {/* AI-Powered Personalized Recommendations */}
+          {isGroqAvailable() && (
+            <div className="mt-6">
+              <h3 className="text-xl font-bold text-[#1E6A8C] mb-3">Personalized Recommendations</h3>
+              {isLoadingAI ? (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 flex items-center justify-center gap-3">
+                  <Loader2 className="animate-spin text-[#2B9EB3]" size={24} />
+                  <span className="text-gray-700">Generating personalized guidance...</span>
+                </div>
+              ) : aiRecommendations ? (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">{aiRecommendations}</p>
+                </div>
+              ) : null}
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <Link
               to="/safety-plan"
               className="flex-1 bg-[#2B9EB3] hover:bg-[#1E6A8C] text-white text-center py-3 px-6 rounded-lg font-semibold transition-colors"

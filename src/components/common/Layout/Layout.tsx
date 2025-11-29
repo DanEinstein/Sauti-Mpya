@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import { Navigation } from './Navigation';
-import { EmergencyBar } from './EmergencyBar';
-import { QuickExit } from './QuickExit';
+import { Navigation } from '../Navigation/Navigation';
+import { EmergencyBar } from '../EmergencyBar/EmergencyBar';
+import { QuickExit } from '../QuickExit/QuickExit';
 
 interface LayoutProps {
   children: ReactNode;
